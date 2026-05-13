@@ -29,10 +29,21 @@ Resources:
             Fn::GetAtt:
             - MyDistribution
             - DomainName
+  MyCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: website.louisnguyencloud.com
+      ValidationMethod: DNS
   MyDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        ViewerCertificate:
+          AcmCertificateArn:
+            Ref: MyCertificate
+          SslSupportMethod: sni-only
+        Aliases:
+        - website.louisnguyencloud.com
         DefaultCacheBehavior:
           ViewerProtocolPolicy: allow-all
           TargetOriginId: louisnguyen-cloud-resume-2026.s3-website-us-east-1.amazonaws.com

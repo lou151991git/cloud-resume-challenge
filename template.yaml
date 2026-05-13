@@ -20,6 +20,19 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
 
+
+  MyRoute53Record:
+    Type: "AWS::Route53::RecordSetGroup"
+    Properties:
+      HostedZoneId: Z06336472CDG6O91EQ5PX # TODO: Don't hardcode me
+      RecordSets:
+        - Name: website.louisnguyencloud.com # TODO: Don't hardcode me
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !GetAtt MyDistribution.DomainName
+
+
   MyDistribution:
     Type: "AWS::CloudFront::Distribution"
     Properties:

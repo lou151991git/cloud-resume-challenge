@@ -1,4 +1,14 @@
+
+
+
 14/05/2026
+
+
+Setting up CORS (with AWS Lambda & API Gateway) - a security feature built into web browsers deciding which websites are allowed to talk to each other.
+
+Effectively, any website on the internet is allowed to call this API from a browser.
+
+
 
 
 You were deploying a Go Lambda function using AWS SAM with a custom runtime:
@@ -61,4 +71,8 @@ Once the bootstrap file finally appeared inside:
 
 .aws-sam/build/HelloWorldFunction
 
-SAM could correctly package the Lambda deployment artifact, allowing CloudFormation and Lambda deployment to proceed successfully without rollback errors.
+SAM could correctly package the Lambda deployment artifact, allowing CloudFormation and Lambda deployment to proceed successfully without rollback 
+errors.
+
+
+

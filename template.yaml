@@ -22,11 +22,18 @@ Resources:
 
 
   MyRoute53Record:
-    Type: "AWS::Route53::RecordSetGroup"
+    Type: AWS::Route53::RecordSetGroup
     Properties:
-      HostedZoneId: Z06336472CDG6O91EQ5PX # TODO: Don't hardcode me
+      HostedZoneId: Z06336472CDG6O91EQ5PX
+
       RecordSets:
-        - Name: website.louisnguyencloud.com # TODO: Don't hardcode me
+        - Name: website.louisnguyencloud.com
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !GetAtt MyDistribution.DomainName
+
+        - Name: louisnguyencloud.com
           Type: A
           AliasTarget:
             HostedZoneId: Z2FDTNDATAQYW2
@@ -44,6 +51,7 @@ Resources:
             SslSupportMethod: sni-only
         Aliases:
             - website.louisnguyencloud.com # TODO: Don't hardcode me
+            - louisnguyencloud.com # TODO: Don't hardcode me
         DefaultCacheBehavior:
           ViewerProtocolPolicy: allow-all
           TargetOriginId: louisnguyen-cloud-resume-2026.s3-website-us-east-1.amazonaws.com
@@ -56,7 +64,7 @@ Resources:
           - DomainName: louisnguyen-cloud-resume-2026.s3-website-us-east-1.amazonaws.com
             Id: louisnguyen-cloud-resume-2026.s3-website-us-east-1.amazonaws.com
             CustomOriginConfig:
-              OriginProtocolPolicy: match-viewer
+              OriginProtocolPolicy: http-only
         Enabled: "true"
         DefaultRootObject: index.html
 

@@ -1,13 +1,25 @@
 <html>
-    <head>
-        <style>
+<head>
+    <script>
+        fetch('https://nlqsbyxduf.execute-api.us-east-1.amazonaws.com/Prod/hello')
+            .then(response => response.json())
+            .then((data) => {
+                document.getElementById('replaceme').innerText = data.count
+            })
+    </script>
+    
+    <style>
             p {
                 color: red;
             }
-        </style>
-    </head>
-    <body>
-    
-        <p>Hello Worlds! </p>
-    </body>
+    </style>
+</head>
+
+<body> 
+    <p>
+        Visitors:
+        <span id="replaceme" />
+    </p>
+</body>
+
 </html>

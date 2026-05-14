@@ -29,6 +29,14 @@ Resources:
             Fn::GetAtt:
             - MyDistribution
             - DomainName
+      - Name: louisnguyencloud.com
+        Type: A
+        AliasTarget:
+          HostedZoneId: Z2FDTNDATAQYW2
+          DNSName:
+            Fn::GetAtt:
+            - MyDistribution
+            - DomainName
   MyDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -38,6 +46,7 @@ Resources:
           SslSupportMethod: sni-only
         Aliases:
         - website.louisnguyencloud.com
+        - louisnguyencloud.com
         DefaultCacheBehavior:
           ViewerProtocolPolicy: allow-all
           TargetOriginId: louisnguyen-cloud-resume-2026.s3-website-us-east-1.amazonaws.com
@@ -50,7 +59,7 @@ Resources:
         - DomainName: louisnguyen-cloud-resume-2026.s3-website-us-east-1.amazonaws.com
           Id: louisnguyen-cloud-resume-2026.s3-website-us-east-1.amazonaws.com
           CustomOriginConfig:
-            OriginProtocolPolicy: match-viewer
+            OriginProtocolPolicy: http-only
         Enabled: 'true'
         DefaultRootObject: index.html
   BucketPolicy:

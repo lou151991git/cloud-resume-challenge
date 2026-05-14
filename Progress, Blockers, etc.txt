@@ -1,0 +1,64 @@
+14/05/2026
+
+
+You were deploying a Go Lambda function using AWS SAM with a custom runtime:
+
+Runtime: provided.al2
+Handler: bootstrap
+BuildMethod: makefile
+
+Because provided.al2 is a custom runtime, AWS Lambda does not automatically know how to start the application like it would with standard runtimes such as Node.js or Python. Instead, Lambda specifically expects an executable file named:
+
+bootstrap
+
+This bootstrap file acts as the Lambda entry point and is responsible for starting the Go application inside the Lambda execution environment.
+
+Initially, the Lambda deployment kept failing with the error:
+
+Uploaded file must be a non-empty zip
+
+Even though sam build appeared successful, the deployment package being uploaded to Lambda was effectively empty because the required bootstrap executable was missing from the SAM artifacts directory:
+
+.aws-sam/build/HelloWorldFunction
+
+The root cause was related to how the Makefile build process was running on Windows PowerShell.
+
+The original Makefile used Linux-style environment variable syntax:
+
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bootstrap main.go
+
+which PowerShell could not interpret correctly. This caused build failures and prevented the executable from being generated.
+
+After switching to PowerShell-compatible syntax, the Go binary could finally be built manually, confirming that:
+
+Go itself was installed correctly
+the source code compiled successfully
+the bootstrap executable could be generated
+
+However, another issue remained:
+SAM was running the Makefile build inside a temporary working directory rather than directly inside the .aws-sam/build/HelloWorldFunction directory.
+
+As a result:
+
+the bootstrap file was successfully created
+but it stayed inside the temporary build folder
+SAM never copied it into the Lambda artifact directory
+the final deployment zip remained empty
+
+The fix was to explicitly copy the generated executable into SAM’s artifact directory using the $(ARTIFACTS_DIR) variable inside the Makefile:
+
+build-HelloWorldFunction:
+	powershell -Command "$$env:GOOS='linux'; $$env:GOARCH='amd64'; $$env:CGO_ENABLED='0'; go build -o bootstrap main.go"
+	copy bootstrap "$(ARTIFACTS_DIR)\bootstrap"
+
+This ensured that:
+
+the Go binary was compiled correctly for Linux (GOOS=linux)
+the executable was named bootstrap
+the file was copied into the exact directory SAM packages for deployment
+
+Once the bootstrap file finally appeared inside:
+
+.aws-sam/build/HelloWorldFunction
+
+SAM could correctly package the Lambda deployment artifact, allowing CloudFormation and Lambda deployment to proceed successfully without rollback errors.

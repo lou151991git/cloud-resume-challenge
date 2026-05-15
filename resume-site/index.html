@@ -1,7 +1,7 @@
 <html>
 <head>
     <script>
-        fetch('https://nlqsbyxduf.execute-api.us-east-1.amazonaws.com/Prod/hello')
+        fetch('https://nlqsbyxduf.execute-api.us-east-1.amazonaws.com/Prod/get')
             .then(response => response.json())
             .then((data) => {
                 document.getElementById('replaceme').innerText = data.count

@@ -92,14 +92,14 @@ Resources:
               - /*
       Bucket:
         Ref: MyWebsite
-  HelloWorldFunction:
+  GetFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: makefile
-      SamResourceId: HelloWorldFunction
+      SamResourceId: GetFunction
     Properties:
-      CodeUri: HelloWorldFunction
-      Handler: bootstrap
+      CodeUri: GetFunction
+      Handler: get-function
       Runtime: provided.al2
       Architectures:
       - x86_64
@@ -107,25 +107,45 @@ Resources:
         CatchAll:
           Type: Api
           Properties:
-            Path: /hello
+            Path: /get
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE
+  PutFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+      SamResourceId: PutFunction
+    Properties:
+      CodeUri: PutFunction
+      Handler: put-function
+      Runtime: provided.al2
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /put
             Method: GET
       Environment:
         Variables:
           PARAM1: VALUE
 Outputs:
-  HelloWorldAPI:
-    Description: API Gateway endpoint URL for Prod environment for First Function
+  GetFunctionAPI:
+    Description: API Gateway endpoint URL for Get Function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/hello/
-  HelloWorldFunction:
-    Description: First Lambda Function ARN
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/get/
+  GetFunctionArn:
+    Description: Get Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - HelloWorldFunction
+      - GetFunction
       - Arn
-  HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
+  PutFunctionArn:
+    Description: Put Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - HelloWorldFunctionRole
+      - PutFunction
       - Arn

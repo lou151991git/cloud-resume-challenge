@@ -1,20 +1,60 @@
 package main
 
 import (
+	"context"
+	"os"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	return events.APIGatewayProxyResponse{
-		Headers: map[string]string{
-			"Access-Control-Allow-Origin":  "*",
-			"Access-Control-Allow-Methods": "*",
-			"Access-Control-Allow-Headers": "*",
+	tableName := os.Getenv("TABLE_NAME")
+
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       err.Error(),
+		}, nil
+	}
+
+	client := dynamodb.NewFromConfig(cfg)
+
+	result, err := client.GetItem(context.TODO(), &dynamodb.GetItemInput{
+		TableName: aws.String(tableName),
+
+		Key: map[string]types.AttributeValue{
+			"ID": &types.AttributeValueMemberS{
+				Value: "counter",
+			},
 		},
-		Body:       `{"count":2}`,
+	})
+
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       err.Error(),
+		}, nil
+	}
+
+	count := result.Item["visits"].(*types.AttributeValueMemberN).Value
+
+	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
+
+		Headers: map[string]string{
+			"Access-Control-Allow-Origin": "*",
+		},
+
+		Body: `{"count":` + count + `}`,
 	}, nil
 }
 

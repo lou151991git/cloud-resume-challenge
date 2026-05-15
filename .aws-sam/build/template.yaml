@@ -103,6 +103,10 @@ Resources:
       Runtime: provided.al2
       Architectures:
       - x86_64
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoDBTable
       Events:
         CatchAll:
           Type: Api
@@ -111,7 +115,8 @@ Resources:
             Method: GET
       Environment:
         Variables:
-          PARAM1: VALUE
+          TABLE_NAME:
+            Ref: DynamoDBTable
   PutFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -123,6 +128,10 @@ Resources:
       Runtime: provided.al2
       Architectures:
       - x86_64
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: DynamoDBTable
       Events:
         CatchAll:
           Type: Api
@@ -131,7 +140,8 @@ Resources:
             Method: GET
       Environment:
         Variables:
-          PARAM1: VALUE
+          TABLE_NAME:
+            Ref: DynamoDBTable
 Outputs:
   GetFunctionAPI:
     Description: API Gateway endpoint URL for Get Function

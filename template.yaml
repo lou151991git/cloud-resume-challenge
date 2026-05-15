@@ -99,45 +99,62 @@ Resources:
 
 
   GetFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
+
     Metadata:
       BuildMethod: makefile
+
     Properties:
       CodeUri: get-function/
       Handler: get-function
       Runtime: provided.al2
+
       Architectures:
         - x86_64
+
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable
+
       Events:
         CatchAll:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /get
             Method: GET
-      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+
+      Environment:
         Variables:
-          PARAM1: VALUE
+          TABLE_NAME: !Ref DynamoDBTable
 
 
   PutFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: makefile
+
     Properties:
       CodeUri: put-function/
       Handler: put-function
       Runtime: provided.al2
+
       Architectures:
         - x86_64
+
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable
+
       Events:
         CatchAll:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /put
             Method: GET
-      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+
+      Environment:
         Variables:
-          PARAM1: VALUE         
+          TABLE_NAME: !Ref DynamoDBTable
 
 
 

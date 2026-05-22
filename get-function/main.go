@@ -13,6 +13,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
+func buildResponse(count string) string {
+	return `{"count":` + count + `}`
+}
+
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	tableName := os.Getenv("TABLE_NAME")
@@ -54,7 +58,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			"Access-Control-Allow-Origin": "*",
 		},
 
-		Body: `{"count":` + count + `}`,
+		Body: buildResponse(count),
 	}, nil
 }
 

@@ -1,59 +1,41 @@
 package main
 
-import (
-	"testing"
+import "testing"
 
-	"github.com/aws/aws-lambda-go/events"
-)
-
-func TestHandler(t *testing.T) {
+func TestBuildResponse(t *testing.T) {
 	testCases := []struct {
-		name          string
-		request       events.APIGatewayProxyRequest
-		expectedBody  string
-		expectedError error
+		name     string
+		count    string
+		expected string
 	}{
 		{
-			// mock a request with an empty SourceIP
-			name: "empty IP",
-			request: events.APIGatewayProxyRequest{
-				RequestContext: events.APIGatewayProxyRequestContext{
-					Identity: events.APIGatewayRequestIdentity{
-						SourceIP: "",
-					},
-				},
-			},
-			expectedBody:  "Hello, world!\n",
-			expectedError: nil,
+			name:     "count is 1",
+			count:    "1",
+			expected: `{"count":1}`,
 		},
 		{
-			// mock a request with a localhost SourceIP
-			name: "localhost IP",
-			request: events.APIGatewayProxyRequest{
-				RequestContext: events.APIGatewayProxyRequestContext{
-					Identity: events.APIGatewayRequestIdentity{
-						SourceIP: "127.0.0.1",
-					},
-				},
-			},
-			expectedBody:  "Hello, 127.0.0.1!\n",
-			expectedError: nil,
+			name:     "count is 999",
+			count:    "999",
+			expected: `{"count":999}`,
+		},
+		{
+			name:     "count is 0",
+			count:    "0",
+			expected: `{"count":0}`,
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			response, err := handler(testCase.request)
-			if err != testCase.expectedError {
-				t.Errorf("Expected error %v, but got %v", testCase.expectedError, err)
-			}
 
-			if response.Body != testCase.expectedBody {
-				t.Errorf("Expected response %v, but got %v", testCase.expectedBody, response.Body)
-			}
+			result := buildResponse(testCase.count)
 
-			if response.StatusCode != 200 {
-				t.Errorf("Expected status code 200, but got %v", response.StatusCode)
+			if result != testCase.expected {
+				t.Errorf(
+					"Expected %v, but got %v",
+					testCase.expected,
+					result,
+				)
 			}
 		})
 	}

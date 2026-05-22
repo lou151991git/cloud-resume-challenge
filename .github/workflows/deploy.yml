@@ -6,7 +6,24 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-infra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Run Go Tests
+        run: go test -v ./...
+
+  deploy-infra:
+    needs: build-infra
     runs-on: ubuntu-latest
 
     steps:

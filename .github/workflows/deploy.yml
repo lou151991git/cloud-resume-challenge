@@ -19,8 +19,17 @@ jobs:
         with:
           go-version: '1.22'
 
-      - name: Run Go Tests
-        run: go test -v ./...
+      - name: Test get-function
+        run: |
+          cd get-function
+          go test -v ./
+
+      - name: Test put-function
+        run: |
+          cd put-function
+          go test -v ./
+
+
 
   deploy-infra:
     needs: build-infra
